@@ -20,6 +20,7 @@
     </style>
 </head>
 <body>
+<!-- 顶部导航栏-->
 <nav class="navbar navbar-expand-lg">
     <a class="navbar-brand mx-auto" href="{% url 'index' %}">网易云音乐热歌榜</a>
 </nav>
@@ -60,12 +61,33 @@
             </li>
             {% endfor %}
         </ul>
+        <!-- 分页导航 -->
+        <nav aria-label="评论分页">
+          <ul class="pagination justify-content-center mt-3">
+            {% if comments.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ comments.previous_page_number }}">上一页</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">上一页</span></li>
+            {% endif %}
+            <li class="page-item disabled"><span class="page-link">第 {{ comments.number }} 页 / 共 {{ comments.paginator.num_pages }} 页</span></li>
+            {% if comments.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ comments.next_page_number }}">下一页</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">下一页</span></li>
+            {% endif %}
+          </ul>
+        </nav>
     </div>
     <div class="footer mt-5">
         <small>数据来源：网易云音乐 | 项目演示 &copy; 2024</small>
     </div>
 </div>
 <script>
+    // Echarts饼图
     var myChart = echarts.init(document.getElementById('pie'));
     var option = {
         title: { text: '情感分布', left: 'center', textStyle: { fontSize: 18 } },

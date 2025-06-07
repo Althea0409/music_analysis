@@ -9,6 +9,7 @@ class Song(models.Model):
     artist = models.CharField(max_length=128, verbose_name="歌手")
     album = models.CharField(max_length=128, blank=True, verbose_name="专辑")
     hot = models.IntegerField(default=0, verbose_name="热度")
+    toplist = models.CharField(max_length=32, default='热歌榜', verbose_name="榜单")  # 新增榜单字段
 
     def __str__(self):
         return self.name
@@ -20,7 +21,7 @@ class Comment(models.Model):
     song = models.ForeignKey(Song, on_delete=models.CASCADE, verbose_name="所属歌曲")
     content = models.TextField(verbose_name="评论内容")
     like_count = models.IntegerField(default=0, verbose_name="点赞数")
-    sentiment = models.FloatField(default=0.0, verbose_name="情感得分")  # 0-1，越大越正面
+    sentiment = models.FloatField(default=0.0, verbose_name="情感得分")
 
     def __str__(self):
         return self.content[:20]
