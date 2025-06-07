@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ song.name }} - 详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'music/css/bootstrap.min.css' %}">
+    <script src="{% static 'music/js/echarts.min.js' %}"></script>
+    <style>
+        body { background: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%); }
+        .navbar { background: #e63946; }
+        .navbar-brand, .nav-link, .navbar-brand:visited { color: #fff !important; }
+        .song-header { margin-top: 30px; }
+        .wordcloud-img { width: 100%; max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);}
+        .list-group-item { background: #fff; border: none; border-bottom: 1px solid #f1f1f1; }
+        .list-group-item:last-child { border-bottom: none; }
+        .badge-like { background: #e63946; }
+        .footer { color: #888; text-align: center; margin-top: 40px; }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand mx-auto" href="{% url 'index' %}">网易云音乐热歌榜</a>
+</nav>
+<div class="container song-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h2 class="mb-1">{{ song.name }}</h2>
+            <h5 class="text-muted mb-2">{{ song.artist }}</h5>
+            <p><span class="badge badge-info">专辑</span> {{ song.album }}</p>
+        </div>
+        <div class="col-md-4 text-md-right text-center">
+            <a href="{% url 'index' %}" class="btn btn-outline-secondary mb-2">返回榜单</a>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-6 mb-4">
+            <div class="card p-3">
+                <h5 class="mb-3">评论情感分布</h5>
+                <div id="pie" style="width: 100%;height:300px;"></div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card p-3">
+                <h5 class="mb-3">热门评论词云</h5>
+                <img src="data:image/png;base64,{{ wordcloud }}" class="wordcloud-img" alt="词云">
+            </div>
+        </div>
+    </div>
+    <div class="card mt-4">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">热门评论</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for c in comments %}
+            <li class="list-group-item">
+                <span>{{ c.content }}</span>
+                <span class="float-right badge badge-like">👍 {{ c.like_count }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="footer mt-5">
+        <small>数据来源：网易云音乐 | 项目演示 &copy; 2024</small>
+    </div>
+</div>
+<script>
+    var myChart = echarts.init(document.getElementById('pie'));
+    var option = {
+        title: { text: '情感分布', left: 'center', textStyle: { fontSize: 18 } },
+        tooltip: { trigger: 'item' },
+        legend: { bottom: 10, left: 'center' },
+        series: [{
+            name: '情感',
+            type: 'pie',
+            radius: '50%',
+            data: [
+                {value: {{ pos }}, name: '正面'},
+                {value: {{ neu }}, name: '中性'},
+                {value: {{ neg }}, name: '负面'}
+            ],
+            label: { fontSize: 14 }
+        }]
+    };
+    myChart.setOption(option);
+</script>
+</body>
+</html>
